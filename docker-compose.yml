@@ -1,0 +1,42 @@
+version: "3.3"
+
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - my-network
+
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - my-network
+
+  postgres:
+    image: postgres:12.19-alpine3.19
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
+
+volumes:
+  db-data:
