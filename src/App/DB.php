@@ -19,6 +19,7 @@ class DB
         $this->connection = DriverManager::getConnection($config);
         $paths = [__DIR__ . '/Entity'];
         $ORMConfig = ORMSetup::createAttributeMetadataConfiguration($paths);
+
         $this->entityManager = new EntityManager($this->connection, $ORMConfig);
     }
 

@@ -7,9 +7,11 @@ require_once __DIR__ . '/../App/Router/Routes.php';
 
 use App\App;
 
+$uri = explode('?', $_SERVER['REQUEST_URI']);
+
 $app = new App(
     [
-        'uri' => $_SERVER['REQUEST_URI'],
+        'uri' => $uri[0],
         'method' => $_SERVER['REQUEST_METHOD']
     ]
 );

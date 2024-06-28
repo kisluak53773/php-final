@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
+use Doctrine\Common\Collections\Collection;
 
 #[Entity]
 #[Table('users')]
@@ -30,6 +33,14 @@ class User
 
     #[Column(name: 'updated_at')]
     private DateTime $updatedAt;
+
+    #[OneToMany(targetEntity: Order::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private Collection $orders;
+
+    public function __construct()
+    {
+        $this->orders = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -56,6 +67,16 @@ class User
         $this->password = $password;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
     public function getCreatedAt(): DateTime
     {
         return $this->createdAt;
@@ -74,5 +95,19 @@ class User
     public function setUpdatedAt(DateTime $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): User
+    {
+        $order->setUser($this);
+
+        $this->orders->add($order);
+
+        return $this;
     }
 }

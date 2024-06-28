@@ -1,10 +1,13 @@
 FROM php:fpm-alpine
 
 RUN apk add --no-cache $PHPIZE_DEPS \
-    autoconf \
-    g++ \
-    make \
-    linux-headers
+       autoconf \
+       g++ \
+       make \
+       linux-headers \
+       postgresql-dev
+
+RUN docker-php-ext-install pdo_pgsql
 
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug

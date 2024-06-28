@@ -15,7 +15,7 @@ $dotenv->load();
 
 $config = new JsonFile('migrations.json');
 $params = [
-    'host'     => $_ENV['POSTGRES_HOST'],
+    'host'     => 'localhost',
     'user'     => $_ENV['POSTGRES_USER'],
     'password' => $_ENV['POSTGRES_PASSWORD'],
     'dbname'   => $_ENV['POSTGRES_DB'],

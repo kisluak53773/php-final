@@ -12,11 +12,11 @@ class Config
     {
         $this->config = [
             'db'     => [
-                'host'     => $env['POSTGRES_HOST'],
-                'user'     => $env['POSTGRES_USER'],
+                'dbname' => $env['POSTGRES_DB'],
+                'user' => $env['POSTGRES_USER'],
                 'password' => $env['POSTGRES_PASSWORD'],
-                'dbname'   => $env['POSTGRES_DB'],
-                'driver'   => $env['DB_DRIVER'] ?? 'pdo_pgsql',
+                'host' => $env['POSTGRES_HOST'],
+                'driver' => $env['DB_DRIVER'] ?? 'pdo_pgsql',
             ],
         ];
     }

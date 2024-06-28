@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Psr7;
+namespace App\Router\Wrapper;
 
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
