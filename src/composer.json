@@ -19,7 +19,8 @@
         "migrate:next": "./vendor/bin/doctrine-migrations migrate next",
         "migrate:latest": "./vendor/bin/doctrine-migrations migrate latest",
         "status": "./vendor/bin/doctrine-migrations status",
-        "diff": "./vendor/bin/doctrine-migrations diff"
+        "diff": "./vendor/bin/doctrine-migrations diff",
+        "generate-cache": "./vendor/bin/doctrine orm:generate-proxies"
     },
     "authors": [
         {

@@ -1,65 +1,8 @@
 {{ include('_header.html.twig') }}
 <main>
-      <div class=" w-full flex items-start p-4 justify-center">
-          <form class=" border-2 border-gray-400 rounded-md w-1/3 py-10 flex flex-col items-center justify-center"
-                method="POST" action="/session">
-              <label for="key">Введите ключ сессии </label><br>
-              <input required class=" border-2 border-black outline-none rounded-md" type="text" id="key" name="key"><br>
-              <label for="value">Введите значение сессии </label><br>
-              <input required class=" border-2 border-black outline-none rounded-md" type="text" id="value" name="value"><br>
-              <input class=" bg-black text-white transition rounded-md w-40 hover:bg-gray-400 mt-10 py-2 cursor-pointer"
-                     type="submit" value="Отправить">
-          </form>
-          <form class=" border-2 ml-8 border-gray-400 rounded-md w-2/3 py-10 flex flex-col items-center justify-center"
-                method="POST" action="/cookie">
-              <label for="key">Введите ключ cookie </label><br>
-              <input required class=" border-2 border-black outline-none rounded-md" type="text" id="key" name="key"><br>
-              <label for="value">Введите значение cookie </label><br>
-              <input required class=" border-2 border-black outline-none rounded-md" type="text" id="value" name="value"><br>
-              <label for="time">Введите время в секундах через которе cookie стухнет </label><br>
-              <input required class=" border-2 border-black outline-none rounded-md" type="text" id="time" name="time"><br>
-              <input class=" bg-black text-white transition rounded-md w-40 hover:bg-gray-400 mt-10 py-2 cursor-pointer"
-                     type="submit" value="Отправить">
-          </form>
-      </div>
-    <div class=" p-4 grid grid-cols-2 gap-4">
-        <div>
-            {% if cookies is empty %}
-                <h1 class=" font-bold">Нет печенек</h1>
-            {% else %}
-                <h1 class=" font-bold">Список куков</h1>
-                <form method="POST" action="/cookie/delete">
-                    <ul>
-                        {% for key, item in cookies %}
-                            <li class=" border-2 p-4 my-2 border-black rounded-md flex">
-                                <input type="checkbox" id="cookie{{ key }}" name="cookie{{ key }}" value="{{ key }}">
-                                <label class="ml-2" for="cookie{{ key }}"> {{ item }}</label><br>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                    <input class=" w-full text-center bg-black text-white transition rounded-md w-40
-                                hover:bg-gray-400 mt-10 py-2 cursor-pointer"
-                           type="submit" value="Удалить выбранные куки">
-                </form>
-            {% endif %}
-        </div>
-        <div>
-            {% if session is defined and session is not empty %}
-                <form method="POST" action="/session/destroy">
-                    <h1 class=" font-bold">Список данных в сессии</h1>
-                    <ul>
-                        {% for item in session %}
-                            <li class=" border-2 p-4 my-2 border-black rounded-md">{{ item }}</li>
-                        {% endfor %}
-                    </ul>
-                    <input class=" w-full text-center bg-black text-white transition rounded-md w-40
-                                hover:bg-gray-400 mt-10 py-2 cursor-pointer"
-                           type="submit" value="Уничтожить текущую сессию">
-                </form>
-            {% else %}
-                <h1 class=" font-bold">Сессия пуста или неинициализирована</h1>
-            {% endif %}
-        </div>
-    </div>
+    <section id="output" class=" flex items-center justify-center mt-4">
+        <img class="  w-4 h-4" src="/public/svg/search.svg" alt="search icon"/>
+        <input id="search" class="border-b-2 border-b-black border-b-solid focus:outline-none w-1/3" type="text" />
+    </section>
 </main>
 {{ include('_footer.html.twig') }}

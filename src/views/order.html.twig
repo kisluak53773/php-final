@@ -1,0 +1,10 @@
+{{ include('_header.html.twig') }}
+<main class="h-screen flex flex-col items-center justify-center h-full">
+    <article class="flex flex-col text-center border-2 border-black border-solid rounded-lg p-10">
+        <h1>Product: {{ order.product }}</h1>
+        <span>Id: {{ order.id }}</span>
+        <span>Created at: {{ order.createdAt }}</span>
+        <span>Updated at: {{ order.updatedAt }}</span>
+    </article>
+</main>
+{{ include('_footer.html.twig') }}

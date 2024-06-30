@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\App;
+use App\Entity\Order;
+use App\Entity\User;
+use App\Service\EntityService;
 
 header("Content-Type: text/html; charset=UTF-8");
 
@@ -26,6 +29,32 @@ class HomeController
     public function test(): void
     {
         echo "test";
+    }
+
+    public function findById(string $id): void
+    {
+        if (!$id) {
+            echo App::twig()->render('error.html.twig');
+
+            exit;
+        }
+
+        $entityManager = App::db()->getEntityManager();
+        $user = $entityManager->getRepository(User::class)->findAll();
+        $order = $entityManager->getRepository(Order::class)->find($id);
+
+        if (!$order) {
+            echo App::twig()->render('error.html.twig');
+
+            exit;
+        }
+
+        echo App::twig()->render('order.html.twig', ['order' => EntityService::convertOrderIntoArray($order)]);
+    }
+
+    public function error(): void
+    {
+        echo App::twig()->render('error.html.twig');
     }
 
     public function deleteCookies(): void
