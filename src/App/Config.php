@@ -18,6 +18,12 @@ class Config
                 'host' => $env['POSTGRES_HOST'],
                 'driver' => $env['DB_DRIVER'] ?? 'pdo_pgsql',
             ],
+            'redis' =>[
+                'scheme' => $env['REDIS_SCHEME'],
+                'host' => $env['REDIS_HOST'],
+                'port' =>(int) $env['REDIS_PORT'],
+                'password' => $env['REDIS_PASSWORD'],
+            ]
         ];
     }
 

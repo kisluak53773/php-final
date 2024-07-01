@@ -39,6 +39,14 @@ class HomeController
             exit;
         }
 
+        $cacheService = App::cacheService();
+
+        if ($cacheService->has($_SERVER['REQUEST_URI'])) {
+            echo $cacheService->get($_SERVER['REQUEST_URI']);
+
+            exit;
+        }
+
         $entityManager = App::db()->getEntityManager();
         $user = $entityManager->getRepository(User::class)->findAll();
         $order = $entityManager->getRepository(Order::class)->find($id);
@@ -49,7 +57,11 @@ class HomeController
             exit;
         }
 
-        echo App::twig()->render('order.html.twig', ['order' => EntityService::convertOrderIntoArray($order)]);
+        $renderResult = App::twig()->render('order.html.twig', ['order' => EntityService::convertOrderIntoArray($order)]);
+
+        $cacheService->set($_SERVER['REQUEST_URI'], $renderResult);
+
+        echo $renderResult;
     }
 
     public function error(): void

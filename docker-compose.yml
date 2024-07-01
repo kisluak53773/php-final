@@ -34,6 +34,14 @@ services:
     networks:
       - my-network
 
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass mypassword
+    networks:
+      - my-network
+
 networks:
   my-network:
     driver: bridge

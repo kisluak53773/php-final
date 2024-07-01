@@ -6,8 +6,6 @@ namespace App\Controller;
 
 use App\App;
 use App\Entity\Order;
-use App\Entity\User;
-use App\Service\EntityService;
 
 header('Content-Type: application/json');
 
@@ -21,6 +19,14 @@ class JsonController
             exit;
         }
 
+        $cacheService = App::cacheService();
+
+        if ($cacheService->has($_SERVER['REQUEST_URI'])) {
+            echo $cacheService->get($_SERVER['REQUEST_URI']);
+
+            exit;
+        }
+
         $queryBuilder = App::db()->getEntityManager()->createQueryBuilder();
         $queryBuilder->select('o')
             ->from(Order::class, 'o')
@@ -28,6 +34,8 @@ class JsonController
             ->setParameter('search', '%' . $_GET['search'] . '%');
 
         $searchResults = $queryBuilder->getQuery()->getArrayResult();
+
+        $cacheService->set($_SERVER['REQUEST_URI'], json_encode($searchResults));
 
         echo json_encode($searchResults);
     }
