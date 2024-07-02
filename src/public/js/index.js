@@ -37,7 +37,8 @@ searchInput.addEventListener('input',  debounce( async () => {
         data.forEach((item) =>{
             const listItem = document.createElement('li');
 
-            listItem.className = 'border-2 border-black border-solid rounded-lg hover:bg-black hover:text-white py-2 px-6 w-1/3 mt-2'
+            listItem.className = 'border-2 border-black border-solid rounded-lg hover:bg-black ' +
+                'hover:text-white py-2 px-6 w-1/3 mt-2 overflow-auto transition-all';
 
             const anchor = document.createElement('a');
             anchor.href = `/order/${item.id}`;

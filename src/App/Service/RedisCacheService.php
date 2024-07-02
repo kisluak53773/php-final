@@ -6,7 +6,6 @@ namespace App\Service;
 
 use Psr\SimpleCache\CacheInterface;
 use Predis\Client;
-use Predis\Response\Status;
 
 class RedisCacheService implements CacheInterface
 {
@@ -24,11 +23,7 @@ class RedisCacheService implements CacheInterface
     {
         $status = $this->client->setex($key, (int) $ttl, $value);
 
-        if ($status instanceof Status) {
-            return $status->getPayload() === 'OK';
-        }
-
-        return false;
+        return $status->getPayload() === 'OK';
     }
 
     public function delete(string $key): bool

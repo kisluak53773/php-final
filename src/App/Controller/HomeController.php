@@ -8,6 +8,7 @@ use App\App;
 use App\Entity\Order;
 use App\Entity\User;
 use App\Service\EntityService;
+use Throwable;
 
 header("Content-Type: text/html; charset=UTF-8");
 
@@ -33,35 +34,39 @@ class HomeController
 
     public function findById(string $id): void
     {
-        if (!$id) {
-            echo App::twig()->render('error.html.twig');
+        try {
+            if (!$id) {
+                echo App::twig()->render('error.html.twig');
 
-            exit;
+                exit;
+            }
+
+            $cacheService = App::cacheService();
+
+            if ($cacheService->has($_SERVER['REQUEST_URI'])) {
+                echo $cacheService->get($_SERVER['REQUEST_URI']);
+
+                exit;
+            }
+
+            $entityManager = App::db()->getEntityManager();
+            $user = $entityManager->getRepository(User::class)->findAll();
+            $order = $entityManager->getRepository(Order::class)->find($id);
+
+            if (!$order) {
+                echo App::twig()->render('error.html.twig');
+
+                exit;
+            }
+
+            $renderResult = App::twig()->render('order.html.twig', ['order' => EntityService::convertOrderIntoArray($order)]);
+
+            $cacheService->set($_SERVER['REQUEST_URI'], $renderResult);
+
+            echo $renderResult;
+        } catch (Throwable $e) {
+            echo 'something went wrong';
         }
-
-        $cacheService = App::cacheService();
-
-        if ($cacheService->has($_SERVER['REQUEST_URI'])) {
-            echo $cacheService->get($_SERVER['REQUEST_URI']);
-
-            exit;
-        }
-
-        $entityManager = App::db()->getEntityManager();
-        $user = $entityManager->getRepository(User::class)->findAll();
-        $order = $entityManager->getRepository(Order::class)->find($id);
-
-        if (!$order) {
-            echo App::twig()->render('error.html.twig');
-
-            exit;
-        }
-
-        $renderResult = App::twig()->render('order.html.twig', ['order' => EntityService::convertOrderIntoArray($order)]);
-
-        $cacheService->set($_SERVER['REQUEST_URI'], $renderResult);
-
-        echo $renderResult;
     }
 
     public function error(): void
