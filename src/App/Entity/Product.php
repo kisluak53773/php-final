@@ -1,34 +1,32 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types= 1);
 
 namespace App\Entity;
 
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\OneToOne;
+use DateTime;
+use Doctrine\ORM\Mapping\ManyToMany;
 
 #[Entity]
-#[Table('users')]
-class User
+#[Table('products')]
+class Product
 {
     #[Id]
-    #[Column('user_id'), GeneratedValue]
+    #[Column('product_id'), GeneratedValue]
     private int $id;
 
     #[Column]
-    private string $email;
+    private string $name;
 
     #[Column]
-    private string $password;
+    private string $price;
 
     #[Column(name: 'created_at')]
     private DateTime $createdAt;
@@ -36,16 +34,16 @@ class User
     #[Column(name: 'updated_at')]
     private DateTime $updatedAt;
 
-    #[OneToMany(targetEntity: Order::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
+    #[ManyToMany(targetEntity: Order::class, mappedBy: 'products')]
     private Collection $orders;
 
-    #[OneToOne(targetEntity: Cart::class, inversedBy: 'user', cascade: ['persist', 'remove'])]
-    #[JoinColumn(name:'cart_id', referencedColumnName:'cart_id')]
-    private Cart $cart;
+    #[ManyToMany(targetEntity: Cart::class, mappedBy: 'products')]
+    private Collection $carts;
 
     public function __construct()
     {
         $this->orders = new ArrayCollection();
+        $this->carts = new ArrayCollection();
     }
 
     public function getId(): int
@@ -53,24 +51,24 @@ class User
         return $this->id;
     }
 
-    public function getEmail(): string
+    public function getName(): string
     {
-        return $this->email;
+        return $this->name;
     }
 
-    public function setEmail(string $email): void
+    public function setName(string $name): void
     {
-        $this->email = $email;
+        $this->name = $name;
     }
 
-    public function getPassword(): string
+    public function getPrice(): string
     {
-        return $this->password;
+        return $this->price;
     }
 
-    public function setPassword(string $password): void
+    public function setPrice(string $price): void
     {
-        $this->password = $password;
+        $this->price = $price;
     }
 
     public function getCreatedAt(): DateTime
@@ -98,22 +96,18 @@ class User
         return $this->orders;
     }
 
-    public function addOrder(Order $order): User
+    public function addOrder(Order $order): void
     {
-        $order->setUser($this);
-
         $this->orders->add($order);
-
-        return $this;
     }
 
-    public function getCart(): Cart
+    public function getCarts(): Collection
     {
-        return $this->cart;
+        return $this->carts;
     }
 
-    public function setCart(Cart $cart): void
+    public function addCart(Cart $cart): void
     {
-        $this->cart = $cart;
+        $this->carts->add($cart);
     }
 }

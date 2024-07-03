@@ -23,6 +23,11 @@ class RouterMapper
         self::register($routeUrl, 'GET', $action);
     }
 
+    public static function addDeleteRoute($routeUrl, array $action): void
+    {
+        self::register($routeUrl, 'DELETE', $action);
+    }
+
     public static function addPostRoute($routeUrl, array $action): void
     {
         self::register($routeUrl, 'POST', $action);

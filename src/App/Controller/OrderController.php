@@ -5,43 +5,60 @@ namespace App\Controller;
 use App\App;
 use App\Entity\User;
 use App\Entity\Order;
+use App\Entity\Cart;
 use DateTime;
+
+header('Content-Type: application/json');
 
 class OrderController
 {
-    /**
-     * @return void
-     *
-     * @throws \Doctrine\ORM\Exception\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
     public function create(): void
     {
-        $entityManager = App::db()->getEntityManager();
-        $userId = $_POST['userId'];
-        $user = $entityManager->getRepository(User::class)->find($userId);
+        if(!$_POST['address'] || !$_POST['paymentMethod']) {
+            http_response_code(400);
+            echo json_encode(['message' => 'address or payment method is not provided']);
 
-        if (!$user) {
-            http_response_code(404);
-            echo "User not found";
-
-            exit;
+            return;
         }
 
-        $order  = new Order();
+        $status = $_POST['status'] ?? 'unpaid';
+        $entityManager = App::db()->getEntityManager();
 
-        $order->setProduct($_POST['product']);
+        $cart = $entityManager->getRepository(Cart::class)->find($_SESSION['cartId']);
+        $user = $entityManager->getRepository(User::class)->find($_SESSION['userId']);
+
+        if (!$cart || !$user) {
+            http_response_code(401);
+            echo json_encode(['message' => 'you are probably unathorized or your cart is empty']);
+
+            return;
+        }
+
+        $productCollection = $cart->getProducts();
+
+        if ($productCollection->isEmpty()) {
+            http_response_code(400);
+            echo json_encode(['message'=> 'cart can not be empty']);
+
+            return;
+        }
+
+        $order = new Order();
+        $order->setAddress($_POST['address']);
+        $order->setPaymentMethod($_POST['paymentMethod']);
+        $order->setStatus($status);
         $order->setCreatedAt(new DateTime('now'));
         $order->setUpdatedAt(new DateTime('now'));
+        $order->setUser($user);
 
-        $user->addOrder($order);
-        $user->setUpdatedAt(new DateTime('now'));
+        foreach ($productCollection as $product) {
+            $order->addProduct($product);
+        }
 
-        $entityManager->persist($user);
-
+        $entityManager->persist($order);
         $entityManager->flush();
 
         http_response_code(201);
-        echo json_encode(['message' => 'Order created']);
+        echo json_encode(['message' => 'order created']);
     }
 }

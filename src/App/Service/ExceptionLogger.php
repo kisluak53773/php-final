@@ -15,7 +15,7 @@ class ExceptionLogger
 
     public function log(Throwable $e): bool
     {
-        $consoleHandler = new StreamHandler(STDOUT);
+        $consoleHandler = new StreamHandler('php://output');
         $this->logger->pushHandler($consoleHandler);
         $class = explode('\\', get_class($e));
         $this->logger->error($e->getMessage() . ' line:' . $e->getLine() .

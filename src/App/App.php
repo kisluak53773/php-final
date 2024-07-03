@@ -61,6 +61,11 @@ class App
         $client = new Client($this->config->redis ?? []);
         self::$redisCacheService = new RedisCacheService($client);
 
+        session_start();
+
+        $_SESSION['userId'] = 1;
+        $_SESSION['cartId'] =2;
+
         return $this;
     }
 
