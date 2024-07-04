@@ -125,8 +125,8 @@ class HomeController
         echo "Hello World!";
     }
 
-    public function about(): void
+    public function orderPage(): void
     {
-        xdebug_info();
+        echo App::twig()->render('order.html.twig');
     }
 }

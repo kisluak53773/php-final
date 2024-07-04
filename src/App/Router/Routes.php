@@ -18,6 +18,7 @@ RouterMapper::addGetRoute('/',[HomeController::class,'index']);
 RouterMapper::addPostRoute('/order',[OrderController::class, 'create']);
 RouterMapper::addGetRoute('/order',[JsonController::class, 'findByName']);
 RouterMapper::addGetRoute('/order/{id}', [HomeController::class, 'findById']);
+RouterMapper::addGetRoute('/order/page', [HomeController::class, 'orderPage']);
 
 RouterMapper::addPostRoute('/product', [ProductController::class, 'createProduct']);
 RouterMapper::addGetRoute('/product', [ProductController::class, 'getProducts']);
@@ -28,5 +29,3 @@ RouterMapper::addGetRoute('/cart/product',[CartController::class, 'getProductsIn
 RouterMapper::addDeleteRoute('/cart/product/{id}', [CartController::class, 'deleteProduct']);
 
 RouterMapper::addGetRoute('/error',[HomeController::class, 'error']);
-
-RouterMapper::addGetRoute('/about',[HomeController::class, 'about']);

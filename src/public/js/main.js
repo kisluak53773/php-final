@@ -94,6 +94,10 @@ const renderCartProducts = () => {
     button.textContent = "Оформить заказ";
     button.className =
       "rounded-lg bg-black text-white py-2 px-4 h-10 ml-auto transition-all hover:bg-gray-700";
+    button.addEventListener(
+      "click",
+      () => (window.location.href = "/order/page")
+    );
 
     priceContainer.appendChild(div);
     priceContainer.appendChild(button);

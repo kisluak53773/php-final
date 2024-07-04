@@ -1,10 +1,21 @@
-{{ include('_header.html.twig') }}
-<main class="h-screen flex flex-col items-center justify-center h-full">
-    <article class="flex flex-col text-center border-2 border-black border-solid rounded-lg p-10">
-        <h1>Product: {{ order.product }}</h1>
-        <span>Id: {{ order.id }}</span>
-        <span>Created at: {{ order.createdAt }}</span>
-        <span>Updated at: {{ order.updatedAt }}</span>
-    </article>
+{{ include('_order_header.html.twig') }}
+<main class="h-screen flex flex-col items-center justify-center h-full"> 
+        <section class="w-1/3 max-h-fit border-2 border-black border-solid rounded-lg mb-10" id="cart">
+            <h1 class="font-bold text-center py-4 border-b-2 border-b-black border-b-solid w-full">Корзина</h1>
+        </section>
+        <form class=" border-2 ml-8 border-gray-400 rounded-md w-2/3 py-10 flex flex-col items-center justify-center"
+                method="POST" action="/order">
+            <label for="address">Введите адресс</label><br>
+            <input required class=" border-2 border-black outline-none rounded-md" type="text" id="address" name="address"><br>
+            <legend>Выьерите способ оплаты </legend><br>
+            <div>
+                <input type="radio" id="cash" name="paymentMethod" value="cash" checked />
+                <label for="cash">Наличными</label>
+                <input type="radio" id="card" name="paymentMethod" value="card"/>
+                <label for="card">Картой при получении</label>
+            </div>
+            <input class=" bg-black text-white transition rounded-md w-50 hover:bg-gray-400 px-4 mt-10 py-2 cursor-pointer"
+                     type="submit" value="Завершить оформление заказа">
+        </form>
 </main>
 {{ include('_footer.html.twig') }}

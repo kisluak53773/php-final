@@ -1,5 +1,11 @@
 {{ include('_header.html.twig') }}
 <main class=" flex item-center justify-center text-bold text-16">
-    <h1>Error 404</h1>
+    {% if error is defined and message is defined %}
+        <h1>Error {{ error }}</h1>
+        <h1>{{ message }}</h1>
+    {% else %}
+        <h1>Error 404</h1>
+        <h1>not found</h1>
+    {% endif %}
 </main>
 {{ include('_footer.html.twig') }}
