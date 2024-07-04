@@ -18,6 +18,7 @@ class App
 {
     private static DB $db;
     private static RedisCacheService $redisCacheService;
+    private static Container $container;
     private Config $config;
     private ExceptionLogger $exceptionLogger;
     private static Environment $twig;
@@ -42,6 +43,11 @@ class App
         return self::$redisCacheService;
     }
 
+    public static function container(): Container
+    {
+        return self::$container;
+    }
+
     public function boot(): self
     {
         $dotenv = Dotenv::createImmutable(dirname('/../' .__DIR__));
@@ -60,6 +66,8 @@ class App
 
         $client = new Client($this->config->redis ?? []);
         self::$redisCacheService = new RedisCacheService($client);
+        
+        self::$container = new Container();
 
         session_start();
 

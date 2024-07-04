@@ -8,6 +8,7 @@ use App\Router\Exception\ControllerMethodNotDefined;
 use App\Router\Exception\ControllerNotFound;
 use App\Router\Exception\NotFoundException;
 use App\Router\Exception\WrongControllerDefinition;
+use App\App;
 
 class RouterMapper
 {
@@ -84,7 +85,7 @@ class RouterMapper
                         throw new ControllerNotFound();
                     }
 
-                    $classInstance = new $class();
+                    $classInstance = App::container()->get($class);
 
                     if (!method_exists($classInstance, $method)) {
                         http_response_code(500);
