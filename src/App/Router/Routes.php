@@ -22,10 +22,12 @@ RouterMapper::addGetRoute('/order/page', [HomeController::class, 'orderPage']);
 
 RouterMapper::addPostRoute('/product', [ProductController::class, 'createProduct']);
 RouterMapper::addGetRoute('/product', [ProductController::class, 'getProducts']);
+RouterMapper::addGetRoute('/product/sort', [ProductController::class, 'getSortedProducts']);
 
 RouterMapper::addPostRoute('/cart', [CartController::class,'createCart']);
 RouterMapper::addPostRoute('/cart/add', [CartController::class, 'addToCart']);
 RouterMapper::addGetRoute('/cart/product',[CartController::class, 'getProductsInCart']);
 RouterMapper::addDeleteRoute('/cart/product/{id}', [CartController::class, 'deleteProduct']);
 
+RouterMapper::addGetRoute('/decorator', [HomeController::class, 'decorator']);
 RouterMapper::addGetRoute('/error',[HomeController::class, 'error']);

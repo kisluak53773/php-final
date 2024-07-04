@@ -9,6 +9,9 @@ use App\Entity\Order;
 use App\Entity\User;
 use App\Service\EntityService;
 use Throwable;
+use App\Decorator\StandartSum;
+use App\Decorator\ExtraSumm;
+use App\Decorator\SuperExtraSum;
 
 header("Content-Type: text/html; charset=UTF-8");
 
@@ -128,5 +131,14 @@ class HomeController
     public function orderPage(): void
     {
         echo App::twig()->render('order.html.twig');
+    }
+
+    public function decorator():void
+    {
+        $decorator = new StandartSum();
+        $decorator = new ExtraSumm($decorator);
+        $decorator = new SuperExtraSum($decorator);
+
+        echo $decorator->sort(40);
     }
 }

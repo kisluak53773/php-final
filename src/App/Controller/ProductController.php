@@ -8,6 +8,11 @@ use App\App;
 use App\Entity\Product;
 use DateTime;
 use  \Psr\SimpleCache\InvalidArgumentException;
+use App\Service\ProductStrategy;
+use App\Service\AscendingDateSortStrategy;
+use App\Service\DescendingSortStrategy;
+use Doctrine\Common\Collections\ArrayCollection;
+use App\Service\EntityService;
 
 header('Content-Type: application/json');
 
@@ -55,5 +60,38 @@ class ProductController
             http_response_code(500);
             echo json_encode(["message" => 'something went wrong']);
         }
+    }
+
+    public function getSortedProducts():void
+    {
+        if (!$_GET['sort']) {
+            http_response_code(400);
+            echo json_encode(["message" => 'sort method is not provided']);
+
+            return;
+        }
+
+        $entityManager = App::db()->getEntityManager();
+
+        $products = $entityManager->getRepository(Product::class)->findAll();
+
+        $sortStrategy = match(!$_GET['sort']) {
+            'descending' => new ProductStrategy(new DescendingSortStrategy()),
+            default => new ProductStrategy(new AscendingDateSortStrategy())
+        };
+
+        $sortedProducts = $sortStrategy->sort(new ArrayCollection($products));
+
+        $convertedProducts = [];
+
+        if ($sortedProducts) {
+            foreach ($sortedProducts->toArray() as $productItem) {
+                $convertedProduct = EntityService::convertProductIntoArray($productItem);
+                array_push($convertedProducts, $convertedProduct);
+            }
+        }
+
+        http_response_code(200);
+        echo json_encode($convertedProducts);
     }
 }
