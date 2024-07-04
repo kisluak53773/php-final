@@ -45,7 +45,7 @@ const renderCartProducts = () => {
     oldPriceContainer.remove();
   }
 
-  if (cartProducts) {
+  if (cartProducts.length !== 0) {
     const list = document.createElement("ul");
     list.id = "cartProducts";
 
