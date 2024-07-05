@@ -31,5 +31,5 @@ RouterMapper::addGetRoute('/cart/product',[CartController::class, 'getProductsIn
 RouterMapper::addDeleteRoute('/cart/product/{id}', [CartController::class, 'deleteProduct']);
 
 RouterMapper::addGetRoute('/decorator', [HomeController::class, 'decorator']);
-RouterMapper::addGetRoute('/test', [TestController::class, 'test']);
+RouterMapper::addGetRoute('/test', [TestController::class, 'timer']);
 RouterMapper::addGetRoute('/error',[HomeController::class, 'error']);

@@ -5,6 +5,7 @@ declare(strict_types= 1);
 namespace App\Controller;
 
 use App\Service\Contracts\ContainerTestInterface;
+use React\EventLoop\Loop;
 
 class TestController
 {
@@ -15,4 +16,17 @@ class TestController
     {
         echo $this->containerTest->getData();
     }
+
+    public function timer(): void
+    {
+        $loop = Loop::get();
+
+        $loop->addTimer(1, function () {
+            echo 'Hello' . PHP_EOL;
+        });
+        
+        echo "World";
+
+        $loop->run();
+    } 
 }
