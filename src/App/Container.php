@@ -18,9 +18,7 @@ class Container implements ContainerInterface
     public function get(string $id): mixed
     {
         if ($this->has($id)) {
-            $entry = $this->entries[$id];
-
-            return $entry($this);
+            $id = $this->entries[$id];
         }
 
         return $this->resolve($id);
@@ -31,7 +29,7 @@ class Container implements ContainerInterface
         return isset($this->entries[$id]);
     }
 
-    public function set(string $id, callable $concrete): void
+    public function set(string $id, string $concrete): void
     {
         $this->entries[$id] = $concrete;
     }

@@ -13,6 +13,8 @@ use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
 use Predis\Client;
 use App\Service\RedisCacheService;
+use App\Service\Contracts\ContainerTestInterface;
+use App\Service\ContainerTest;
 
 class App
 {
@@ -67,7 +69,9 @@ class App
         $client = new Client($this->config->redis ?? []);
         self::$redisCacheService = new RedisCacheService($client);
         
-        self::$container = new Container();
+        $container = new Container();
+        $container->set(ContainerTestInterface::class, ContainerTest::class);
+        self::$container = $container;
 
         session_start();
 

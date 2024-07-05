@@ -10,6 +10,7 @@ use App\Controller\JsonController;
 use App\Controller\OrderController;
 use App\Controller\ProductController;
 use App\Controller\CartController;
+use App\Controller\TestController;
 
 
 RouterMapper::addGetRoute('/{id}',[FrontController::class, 'home']);
@@ -30,4 +31,5 @@ RouterMapper::addGetRoute('/cart/product',[CartController::class, 'getProductsIn
 RouterMapper::addDeleteRoute('/cart/product/{id}', [CartController::class, 'deleteProduct']);
 
 RouterMapper::addGetRoute('/decorator', [HomeController::class, 'decorator']);
+RouterMapper::addGetRoute('/test', [TestController::class, 'test']);
 RouterMapper::addGetRoute('/error',[HomeController::class, 'error']);
