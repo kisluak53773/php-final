@@ -11,10 +11,11 @@ use App\Controller\OrderController;
 use App\Controller\ProductController;
 use App\Controller\CartController;
 use App\Controller\TestController;
+use App\Middleware\RoleMiddleware;
 
 
 RouterMapper::addGetRoute('/{id}',[FrontController::class, 'home']);
-RouterMapper::addGetRoute('/',[HomeController::class,'index']);
+RouterMapper::addGetRoute('/',[TestController::class,'testMiddleware'], [new RoleMiddleware()]);
 
 RouterMapper::addPostRoute('/order',[OrderController::class, 'create']);
 RouterMapper::addGetRoute('/order',[JsonController::class, 'findByName']);

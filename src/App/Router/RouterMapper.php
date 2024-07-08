@@ -9,29 +9,35 @@ use App\Router\Exception\ControllerNotFound;
 use App\Router\Exception\NotFoundException;
 use App\Router\Exception\WrongControllerDefinition;
 use App\App;
+use App\Middleware\Contracts\MiddlewareInterface;
+use App\Router\Wrapper\Request;
+use App\Router\Wrapper\Response;
 
 class RouterMapper
 {
     private static array $routes = [];
 
-    public static function register(string $routeUrl, string $method, array $action): void
+    public static function register(string $routeUrl, string $method, array $action, ?array $middleware = null): void
     {
-        self::$routes[$method][$routeUrl] = $action;
+        self::$routes[$method][$routeUrl] = [
+            'action' => $action,
+            'middleware' => $middleware
+        ];
     }
 
-    public static function addGetRoute($routeUrl, array $action): void
+    public static function addGetRoute($routeUrl, array $action, ?array $middleware = null): void
     {
-        self::register($routeUrl, 'GET', $action);
+        self::register($routeUrl, 'GET', $action, $middleware);
     }
 
-    public static function addDeleteRoute($routeUrl, array $action): void
+    public static function addDeleteRoute($routeUrl, array $action, ?array $middleware = null): void
     {
-        self::register($routeUrl, 'DELETE', $action);
+        self::register($routeUrl, 'DELETE', $action, $middleware);
     }
 
-    public static function addPostRoute($routeUrl, array $action): void
+    public static function addPostRoute($routeUrl, array $action, ?array $middleware = null): void
     {
-        self::register($routeUrl, 'POST', $action);
+        self::register($routeUrl, 'POST', $action, $middleware);
     }
 
     public static function getRoutes(): array
@@ -52,8 +58,7 @@ class RouterMapper
     }
 
     /**
-     * @param string $routeUrl
-     * @param string $method
+     * @param Request $request
      *
      * @return mixed
      *
@@ -62,22 +67,32 @@ class RouterMapper
      * @throws NotFoundException
      * @throws WrongControllerDefinition
      */
-    public static function handleRoute(string $routeUrl, string $method): mixed
+    public static function handleRoute(Request $request): void
     {
-        if (isset(self::$routes[$method])) {
-            $routes = self::$routes[$method];
+        if (isset(self::$routes[$request->getMethod()])) {
+            $routes = self::$routes[$request->getMethod()];
 
             foreach ($routes as $storedUrl => $action) {
-                $params = self::parseUrl($routeUrl, $storedUrl);
+                $params = self::parseUrl($request->getUri()->getPath(), $storedUrl);
 
                 if (is_array($params)) {
-                    if (!is_array($action)) {
+                    if (!is_array($action['action'])) {
                         http_response_code(500);
                         echo json_encode(["message" => "Something went wrong"]);
                         throw new WrongControllerDefinition();
                     }
 
-                    [$class, $method] = $action;
+                    if (isset($action['middleware']) && is_array($action['middleware'])) {
+                        $middlewares =  $action['middleware'];
+
+                        foreach ($middlewares as $middleware) {
+                            if($middleware instanceof MiddlewareInterface) {
+                                $middleware->process(App::request());
+                            }
+                        }
+                    }
+
+                    [$class, $method] = $action['action'];
 
                     if (!class_exists($class)) {
                         http_response_code(500);
@@ -93,7 +108,13 @@ class RouterMapper
                         throw new ControllerMethodNotDefined();
                     }
 
-                    return call_user_func_array([$classInstance, $method], [...$params]);
+                    $response = call_user_func_array([$classInstance, $method], [...$params]);
+
+                    if ($response instanceof Response) {
+                        echo $response->getParsedBody();
+                    }
+
+                    return;
 
                 }
             }

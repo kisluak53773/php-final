@@ -15,6 +15,11 @@ class Response implements ResponseInterface
     private string $reasonPhrase = '';
     private array $headers = [];
     private ?StreamInterface $body = null;
+    private mixed $parsedBody = null;
+
+    public function __construct(mixed $parsedBody){
+        $this->parsedBody = $parsedBody;
+    }
 
     public function getProtocolVersion(): string
     {
@@ -78,6 +83,18 @@ class Response implements ResponseInterface
     {
         $new = clone $this;
         $new->body = $body;
+        return $new;
+    }
+
+    public function getParsedBody(): mixed
+    {
+        return $this->parsedBody;
+    }
+
+    public function withParsedBody(mixed $parsedBody): MessageInterface
+    {
+        $new = clone $this;
+        $new->parsedBody = $parsedBody;
         return $new;
     }
 

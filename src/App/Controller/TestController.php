@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Service\Contracts\ContainerTestInterface;
 use React\EventLoop\Loop;
+use App\Router\Wrapper\Response;
 
 class TestController
 {
@@ -29,4 +30,9 @@ class TestController
 
         $loop->run();
     } 
+
+    public function testMiddleware(): Response
+    {
+        return new Response('Hello world admin');
+    }
 }

@@ -15,20 +15,22 @@ use Predis\Client;
 use App\Service\RedisCacheService;
 use App\Service\Contracts\ContainerTestInterface;
 use App\Service\ContainerTest;
+use App\Router\Wrapper\Request;
 
 class App
 {
     private static DB $db;
     private static RedisCacheService $redisCacheService;
     private static Container $container;
+    private static Request $request;
     private Config $config;
     private ExceptionLogger $exceptionLogger;
     private static Environment $twig;
 
-    public function __construct(
-        private readonly array $request = [],
-    )
-    {}
+    public function __construct(Request $request)
+    {
+        self::$request = $request;
+    }
 
     public static function db(): DB
     {
@@ -48,6 +50,11 @@ class App
     public static function container(): Container
     {
         return self::$container;
+    }
+
+    public static function request(): Request
+    {
+        return self::$request;
     }
 
     public function boot(): self
@@ -76,6 +83,7 @@ class App
         session_start();
 
         $_SESSION['userId'] = 1;
+        $_SESSION['role'] = 'admin';
         $_SESSION['cartId'] =2;
 
         return $this;
@@ -84,7 +92,7 @@ class App
     public function run(): void
     {
         try {
-            RouterMapper::handleRoute($this->request['uri'], $this->request['method']);
+            RouterMapper::handleRoute(self::$request);
         } catch (RouterException $e) {
             $this->exceptionLogger->log($e);
         }
