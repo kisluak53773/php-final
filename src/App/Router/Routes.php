@@ -15,7 +15,7 @@ use App\Middleware\RoleMiddleware;
 
 
 RouterMapper::addGetRoute('/{id}',[FrontController::class, 'home']);
-RouterMapper::addGetRoute('/',[TestController::class,'testMiddleware'], [new RoleMiddleware()]);
+RouterMapper::addGetRoute('/',[TestController::class,'testMiddleware'], [RoleMiddleware::class]);
 
 RouterMapper::addPostRoute('/order',[OrderController::class, 'create']);
 RouterMapper::addGetRoute('/order',[JsonController::class, 'findByName']);

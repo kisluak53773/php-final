@@ -12,8 +12,12 @@ use App\App;
 use App\Middleware\Contracts\MiddlewareInterface;
 use App\Router\Wrapper\Request;
 use App\Router\Wrapper\Response;
+use App\Router\Exception\WrongMiddlewareDefinition;
+use App\Router\Contracts\RequestHandlerInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
-class RouterMapper
+class RouterMapper implements RequestHandlerInterface
 {
     private static array $routes = [];
 
@@ -67,7 +71,7 @@ class RouterMapper
      * @throws NotFoundException
      * @throws WrongControllerDefinition
      */
-    public static function handleRoute(Request $request): void
+    public static function handleRoute(Request $request): mixed
     {
         if (isset(self::$routes[$request->getMethod()])) {
             $routes = self::$routes[$request->getMethod()];
@@ -82,12 +86,20 @@ class RouterMapper
                         throw new WrongControllerDefinition();
                     }
 
+                    $instance = new self();
+
                     if (isset($action['middleware']) && is_array($action['middleware'])) {
                         $middlewares =  $action['middleware'];
 
                         foreach ($middlewares as $middleware) {
-                            if($middleware instanceof MiddlewareInterface) {
-                                $middleware->process(App::request());
+                            $middlewareInstance = App::container()->get($middleware);
+
+                            if($middlewareInstance instanceof MiddlewareInterface) {
+                                $middlewareInstance->process(App::request(), $instance);
+                            } else {
+                                http_response_code(500);
+                                echo json_encode(["message" => "Something went wrong"]);
+                                throw new WrongMiddlewareDefinition();
                             }
                         }
                     }
@@ -110,11 +122,11 @@ class RouterMapper
 
                     $response = call_user_func_array([$classInstance, $method], [...$params]);
 
-                    if ($response instanceof Response) {
-                        echo $response->getParsedBody();
+                    if ($response instanceof ResponseInterface) {
+                        $instance->handle(App::request(), $response);
                     }
 
-                    return;
+                    return $response;
 
                 }
             }
@@ -123,5 +135,14 @@ class RouterMapper
         http_response_code(404);
         echo json_encode(["message" => "Route not found."]);
         throw new NotFoundException();
+    }
+
+    public function handle(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        if ($response instanceof Response) {
+            echo $response->getParsedBody();
+        }
+
+        return $response;
     }
 }

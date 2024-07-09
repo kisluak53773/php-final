@@ -6,17 +6,20 @@ namespace App\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
 use App\Middleware\Contracts\MiddlewareInterface;
+use Psr\Http\Message\ResponseInterface;
+use App\Router\Wrapper\Response;
+use App\Router\Contracts\RequestHandlerInterface;
 
 class RoleMiddleware implements MiddlewareInterface
 {
-    public function process(ServerRequestInterface $request): void
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin')
         {
-            echo 'You are not admin';
+            $handler->handle($request, new Response('You are not admin'));
 
             exit;
         }
-        return;
+        return new Response('ok');
     }
 }
